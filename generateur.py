@@ -21,6 +21,8 @@ taille_police = '50px'
 
 # Nom du fichier SVG de sortie
 filename = 'clavier16.svg'
+# Liste où les zones de détection seront stockées
+detection_zones = []
 
 # Charger une police Single Line Font
 #police = FontProperties(fname="1CamBam_Stick_0")
@@ -261,7 +263,8 @@ def key_enter(dwg, x, y):
     return width_mm
 
 
-def key_delete(dwg, x, y):
+#def key_delete(dwg, x, y):
+def key_delete(dwg, x, y, detection_zones_list, tol_x, tol_y, draw_zone=True):
     width_mm = SIZE_KEY_X * 2
 
     height_mm = SIZE_KEY_Y
@@ -280,6 +283,30 @@ def key_delete(dwg, x, y):
     #text = dwg.text('DEL', insert=((f"{milieu_texte_X}mm"), (f"{milieu_texte_Y}mm")),
     #                text_anchor='middle', font_size='50px', font_family='1CamBam_Stick_0C')
     dwg.add(text)
+
+    # Définir la zone de détection avec tolérance
+    detection_zone = {
+        "key": "DEL",  # Nom de la touche
+        "x_min": x - tol_x,  # Limite gauche avec tolérance
+        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
+        "y_min": y - tol_y,  # Limite haute avec tolérance
+        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+    }
+    
+    # Ajouter la zone de détection à la liste
+    detection_zones_list.append(detection_zone)
+
+     # Dessiner la zone de détection en bleu
+    if draw_zone:  
+        dwg.add(dwg.rect(insert=(f"{detection_zone['x_min']}mm", f"{detection_zone['y_min']}mm"), 
+                      size=(f"{(detection_zone['x_max'] - detection_zone['x_min'])}mm", 
+                             f"{(detection_zone['y_max'] - detection_zone['y_min'])}mm"),
+                      fill='none', stroke='blue', stroke_width='0.5mm', stroke_dasharray='5,5'))
+    
+
+    
+    # Sauvegarder le dessin
+
     dwg.save()
     return width_mm
 
@@ -391,7 +418,8 @@ for i in range(len(liste)):
     dx = key_letter(dwg, liste[i], x, y)
 
 x = x + SPACE_X * 2.5 + dx
-dx = key_delete(dwg, x, y)
+#dx = key_delete(dwg, x, y)
+dx = key_delete(dwg, x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=True)
 
 
 # ligne 3
