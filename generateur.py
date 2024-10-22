@@ -1,10 +1,11 @@
 
 import svgwrite
-import svg2gcode
+#import svg2gcode
 from PIL import Image
 import numpy as np
 from matplotlib.font_manager import FontProperties
 
+enable_detection_zones = True
 echelle = 1
 board_width_mm = 420
 board_height_mm = 210
@@ -48,7 +49,8 @@ def mm_to_px(mm, dpi):
     return px
 
 
-def key_function(dwg, name, x, y):
+#def key_function(dwg, name, x, y):
+def key_function(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_zone=True):
     width_mm = SIZE_KEY_X * 2
     height_mm = SIZE_KEY_Y
     dwg.add(dwg.rect(insert=(f"{x}mm", f"{y}mm"), size=(
@@ -69,11 +71,32 @@ def key_function(dwg, name, x, y):
     #                text_anchor='middle', font_size=taille_police, font_family='Liberation Sans', stroke_width=f"{1}mm", font_weight='100')
       
     dwg.add(text)
+
+    #dessiner la zone de détection
+    detection_zone = {
+        "key": name,  # Nom de la touche
+        "x_min": x - tol_x,  # Limite gauche avec tolérance
+        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
+        "y_min": y - tol_y,  # Limite haute avec tolérance
+        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+    }
+
+    # Ajouter la zone de détection à la liste
+    detection_zones_list.append(detection_zone)
+
+    # Dessiner la zone de détection en bleu
+    if draw_zone:  
+        dwg.add(dwg.rect(insert=(f"{detection_zone['x_min']}mm", f"{detection_zone['y_min']}mm"), 
+                          size=(f"{(detection_zone['x_max'] - detection_zone['x_min'])}mm", 
+                                f"{(detection_zone['y_max'] - detection_zone['y_min'])}mm"),
+                          fill='none', stroke='blue', stroke_width='0.5mm', stroke_dasharray='5,5'))
+
     dwg.save()
     return width_mm
 
 
-def key_letter(dwg, name, x, y):
+#def key_letter(dwg, name, x, y):
+def key_letter(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_zone=True):
     width_mm = SIZE_KEY_X * 1
 
     height_mm = SIZE_KEY_Y
@@ -93,11 +116,33 @@ def key_letter(dwg, name, x, y):
     #text = dwg.text(name, insert=((f"{milieu_texte_X}mm"), (f"{milieu_texte_Y}mm")),
     #                text_anchor='middle', font_size=taille_police, font_family='1CamBam_Stick_0C')
     dwg.add(text)
+
+    # Définir la zone de détection avec tolérance
+    detection_zone = {
+        "key": name,  # Nom de la touche
+        "x_min": x - tol_x,  # Limite gauche avec tolérance
+        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
+        "y_min": y - tol_y,  # Limite haute avec tolérance
+        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+    }
+
+    # Ajouter la zone de détection à la liste
+    detection_zones_list.append(detection_zone)
+
+    # Dessiner la zone de détection en bleu
+    if draw_zone:  
+        dwg.add(dwg.rect(insert=(f"{detection_zone['x_min']}mm", f"{detection_zone['y_min']}mm"), 
+                          size=(f"{(detection_zone['x_max'] - detection_zone['x_min'])}mm", 
+                                f"{(detection_zone['y_max'] - detection_zone['y_min'])}mm"),
+                          fill='none', stroke='blue', stroke_width='0.5mm', stroke_dasharray='5,5'))
+        
+
     dwg.save()
     return width_mm
 
 
-def key_arrow_v(dwg, name, x, y):
+#def key_arrow_v(dwg, name, x, y):
+def key_arrow_v(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_zone=True):
     width_mm = SIZE_KEY_X * 2
     height_mm = SIZE_KEY_Y
 
@@ -109,11 +154,32 @@ def key_arrow_v(dwg, name, x, y):
     text = dwg.text(name, insert=((f"{milieu_texte_X}mm"), (f"{milieu_texte_Y}mm")),
                     text_anchor='middle', font_size='80px', font_family='1CamBam_Stick_0C')
     dwg.add(text)
+
+    #Définir la zone de détection avec tolérance
+    detection_zone= {
+        "key": name, # Nom de la touche
+        "x_min": x - tol_x, # Limite gauche avec tolérance
+        "x_max": x + width_mm + tol_x, # Limite droite avec tolérance
+        "y_min": y - tol_y, # Limite haute avec tolérance
+        "y_max": y + height_mm + tol_y # Limite basse avec tolérance
+    }   
+
+    #ajouter la zone de détection à la liste
+    detection_zones_list.append(detection_zone)
+
+    #Dessiner la zone de détection en bleu
+    if draw_zone:
+        dwg.add(dwg.rect(insert=(f"{detection_zone['x_min']}mm", f"{detection_zone['y_min']}mm"), 
+                          size=(f"{(detection_zone['x_max'] - detection_zone['x_min'])}mm", 
+                                f"{(detection_zone['y_max'] - detection_zone['y_min'])}mm"),
+                          fill='none', stroke='blue', stroke_width='0.5mm', stroke_dasharray='5,5'))    
+
     dwg.save()
     return width_mm
 
 
-def key_arrow_h_left(dwg, name, x, y):
+#def key_arrow_h_left(dwg, name, x, y):
+def key_arrow_h_left(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_zone=True):
     width_mm = SIZE_KEY_X * 2
     height_mm = SIZE_KEY_Y
 
@@ -141,9 +207,32 @@ def key_arrow_h_left(dwg, name, x, y):
     dwg.add(dwg.line(start=(f"{(debut_fleche_X)}mm", f"{debut_fleche_Y}mm"),
                      end=(f"{pointe_fleche_X}mm", f"{pointe_fleche_Y}mm"),
                      stroke='black', stroke_width=f"{line_width_mm}mm"))
+    
+    #Définir la zone de détection avec tolérance
+    detection_zone = {
+        "key": name,  # Nom de la touche
+        "x_min": x - tol_x,  # Limite gauche avec tolérance
+        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
+        "y_min": y - tol_y,  # Limite haute avec tolérance
+        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+    }
+
+    # Ajouter la zone de détection à la liste
+    detection_zones_list.append(detection_zone)
+
+    # Dessiner la zone de détection en bleu
+    if draw_zone:  
+        dwg.add(dwg.rect(insert=(f"{detection_zone['x_min']}mm", f"{detection_zone['y_min']}mm"), 
+                          size=(f"{(detection_zone['x_max'] - detection_zone['x_min'])}mm", 
+                                f"{(detection_zone['y_max'] - detection_zone['y_min'])}mm"),
+                          fill='none', stroke='blue', stroke_width='0.5mm', stroke_dasharray='5,5'))
+
     dwg.save()
     return width_mm
-def key_arrow_up(dwg, name, x, y):
+
+
+#def key_arrow_up(dwg, name, x, y):
+def key_arrow_up(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_zone=True):
     width_mm = SIZE_KEY_X * 2
     height_mm = SIZE_KEY_Y
 
@@ -172,10 +261,32 @@ def key_arrow_up(dwg, name, x, y):
     dwg.add(dwg.line(start=(f"{(debut_fleche_X)}mm", f"{debut_fleche_Y}mm"),
                      end=(f"{pointe_fleche_X}mm", f"{pointe_fleche_Y}mm"),
                      stroke='black', stroke_width=f"{line_width_mm}mm"))
+    
+    #Définir la zone de détection avec tolérance
+    detection_zone = {
+        "key": name,  # Nom de la touche
+        "x_min": x - tol_x,  # Limite gauche avec tolérance
+        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
+        "y_min": y - tol_y,  # Limite haute avec tolérance
+        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+    }
+
+    # Ajouter la zone de détection à la liste
+    detection_zones_list.append(detection_zone)
+
+    # Dessiner la zone de détection en bleu
+    if draw_zone:  
+        dwg.add(dwg.rect(insert=(f"{detection_zone['x_min']}mm", f"{detection_zone['y_min']}mm"), 
+                          size=(f"{(detection_zone['x_max'] - detection_zone['x_min'])}mm", 
+                                f"{(detection_zone['y_max'] - detection_zone['y_min'])}mm"),
+                          fill='none', stroke='blue', stroke_width='0.5mm', stroke_dasharray='5,5'))
+        
+
     dwg.save()
     return width_mm
 
-def key_arrow_down(dwg, name, x, y):
+#def key_arrow_down(dwg, name, x, y):
+def key_arrow_down(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_zone=True):
     width_mm = SIZE_KEY_X * 2
     height_mm = SIZE_KEY_Y
 
@@ -204,11 +315,31 @@ def key_arrow_down(dwg, name, x, y):
     dwg.add(dwg.line(start=(f"{(debut_fleche_X)}mm", f"{debut_fleche_Y}mm"),
                      end=(f"{pointe_fleche_X}mm", f"{pointe_fleche_Y}mm"),
                      stroke='black', stroke_width=f"{line_width_mm}mm"))
+    
+    #Définir la zone de détection avec tolérance
+    detection_zone = {
+        "key": name,  # Nom de la touche
+        "x_min": x - tol_x,  # Limite gauche avec tolérance
+        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
+        "y_min": y - tol_y,  # Limite haute avec tolérance
+        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+    }
+
+    # Ajouter la zone de détection à la liste
+    detection_zones_list.append(detection_zone)
+
+    # Dessiner la zone de détection en bleu
+    if draw_zone:  
+        dwg.add(dwg.rect(insert=(f"{detection_zone['x_min']}mm", f"{detection_zone['y_min']}mm"), 
+                          size=(f"{(detection_zone['x_max'] - detection_zone['x_min'])}mm", 
+                                f"{(detection_zone['y_max'] - detection_zone['y_min'])}mm"),
+                          fill='none', stroke='blue', stroke_width='0.5mm', stroke_dasharray='5,5'))
+        
     dwg.save()
     return width_mm
 
-
-def key_arrow_h_right(dwg, name, x, y):
+#def key_arrow_h_right(dwg, name, x, y):
+def key_arrow_h_right(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_zone=True):
     width_mm = SIZE_KEY_X * 2
     height_mm = SIZE_KEY_Y
 
@@ -236,11 +367,32 @@ def key_arrow_h_right(dwg, name, x, y):
     dwg.add(dwg.line(start=(f"{(debut_fleche_X)}mm", f"{debut_fleche_Y}mm"),
                      end=(f"{pointe_fleche_X}mm", f"{pointe_fleche_Y}mm"),
                      stroke='black', stroke_width=f"{line_width_mm}mm"))
+    
+    #Définir la zone de détection avec tolérance
+    detection_zone = {
+        "key": name,  # Nom de la touche
+        "x_min": x - tol_x,  # Limite gauche avec tolérance
+        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
+        "y_min": y - tol_y,  # Limite haute avec tolérance
+        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+    }
+
+    # Ajouter la zone de détection à la liste
+    detection_zones_list.append(detection_zone)
+
+    # Dessiner la zone de détection en bleu
+    if draw_zone:  
+        dwg.add(dwg.rect(insert=(f"{detection_zone['x_min']}mm", f"{detection_zone['y_min']}mm"), 
+                          size=(f"{(detection_zone['x_max'] - detection_zone['x_min'])}mm", 
+                                f"{(detection_zone['y_max'] - detection_zone['y_min'])}mm"),
+                          fill='none', stroke='blue', stroke_width='0.5mm', stroke_dasharray='5,5'))
+        
     dwg.save()
     return width_mm
 
 
-def key_enter(dwg, x, y):
+#def key_enter(dwg, x, y):
+def key_enter(dwg, x, y, detection_zones_list, tol_x, tol_y, draw_zone=True):
     width_mm = SIZE_KEY_X * 2
 
     height_mm = SIZE_KEY_Y * 2 + SPACE_Y * 1.5
@@ -259,6 +411,25 @@ def key_enter(dwg, x, y):
     #text = dwg.text('OK', insert=((f"{milieu_texte_X}mm"), (f"{milieu_texte_Y}mm")),
     #                text_anchor='middle', font_size='80px', font_family='1CamBam_Stick_0C')
     dwg.add(text)
+
+    # Définir la zone de détection avec tolérance
+    detection_zone = {
+        "key": "OK",  # Nom de la touche
+        "x_min": x - tol_x,  # Limite gauche avec tolérance
+        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
+        "y_min": y - tol_y,  # Limite haute avec tolérance
+        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+    }
+
+    # Ajouter la zone de détection à la liste
+    detection_zones_list.append(detection_zone)
+
+    # Dessiner la zone de détection en bleu
+    if draw_zone:  
+        dwg.add(dwg.rect(insert=(f"{detection_zone['x_min']}mm", f"{detection_zone['y_min']}mm"), 
+                          size=(f"{(detection_zone['x_max'] - detection_zone['x_min'])}mm", 
+                                f"{(detection_zone['y_max'] - detection_zone['y_min'])}mm"),
+                          fill='none', stroke='blue', stroke_width='0.5mm', stroke_dasharray='5,5'))
     dwg.save()
     return width_mm
 
@@ -311,7 +482,8 @@ def key_delete(dwg, x, y, detection_zones_list, tol_x, tol_y, draw_zone=True):
     return width_mm
 
 
-def key_space(dwg, x, y):
+#def key_space(dwg, x, y):
+def key_space(dwg, x, y, detection_zones_list, tol_x, tol_y, draw_zone=True):
     width_mm = SIZE_KEY_X * 7
 
     height_mm = SIZE_KEY_Y
@@ -331,7 +503,27 @@ def key_space(dwg, x, y):
     #text = dwg.text('ESPACE', insert=((f"{milieu_texte_X}mm"), (f"{milieu_texte_Y}mm")),
     #                text_anchor='middle', font_size='60px', font_family='1CamBam_Stick_0C')
     dwg.add(text)
-    # dwg.save()
+
+    # Définir la zone de détection avec tolérance
+    detection_zone = {
+        "key": "DEL",  # Nom de la touche
+        "x_min": x - tol_x,  # Limite gauche avec tolérance
+        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
+        "y_min": y - tol_y,  # Limite haute avec tolérance
+        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+    }
+    
+    # Ajouter la zone de détection à la liste
+    detection_zones_list.append(detection_zone)
+
+     # Dessiner la zone de détection en bleu
+    if draw_zone:  
+        dwg.add(dwg.rect(insert=(f"{detection_zone['x_min']}mm", f"{detection_zone['y_min']}mm"), 
+                      size=(f"{(detection_zone['x_max'] - detection_zone['x_min'])}mm", 
+                             f"{(detection_zone['y_max'] - detection_zone['y_min'])}mm"),
+                      fill='none', stroke='blue', stroke_width='0.5mm', stroke_dasharray='5,5'))
+
+    dwg.save()
     return width_mm
 
 
@@ -377,6 +569,27 @@ def detourage(dwg, bord_X, bord_Y, end_X, end_Y):
     #print(cut_y1)
     print(filename + ' completed')
 
+# Fonction pour afficher la liste des zones de détection sous forme de tableau
+def afficher_detection_zones(detection_zones_list):
+    """
+    Affiche la liste des zones de détection sous forme de tableau avec les nombres arrondis à 1 chiffre après la virgule.
+    :param detection_zones_list: La liste des zones de détection
+    """
+    # En-tête du tableau
+    print(f"{'Touche':<10} {'x_min':<10} {'x_max':<10} {'y_min':<10} {'y_max':<10}")
+    print("-" * 50)  # Ligne de séparation
+
+    # Affichage de chaque zone avec un chiffre après la virgule
+    for zone in detection_zones_list:
+        key = zone['key']
+        x_min = f"{zone['x_min']:.1f}"  # Arrondi à 1 chiffre après la virgule
+        x_max = f"{zone['x_max']:.1f}"
+        y_min = f"{zone['y_min']:.1f}"
+        y_max = f"{zone['y_max']:.1f}"
+        
+        # Affichage formaté en colonnes
+        print(f"{key:<10} {x_min:<10} {x_max:<10} {y_min:<10} {y_max:<10}")
+
 
 dwg = svgwrite.Drawing(filename, profile='tiny', size=(
     f"{board_width_mm}mm", f"{board_height_mm}mm"))
@@ -388,24 +601,24 @@ dwg = svgwrite.Drawing(filename, profile='tiny', size=(
 # ligne 1
 x = 8 * SPACE_X + marge_X_mm
 y = 2*SPACE_Y + marge_Y_mm
-dx = key_function(dwg, 'Acc.', x, y)
+dx = key_function(dwg, 'Acc.', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
 
 x = x + SPACE_X + dx
-dx = key_function(dwg, 'Rech.', x, y)
-
-
-x = x + SPACE_X + dx
-dx = key_function(dwg, 'Emp.', x, y)
+dx = key_function(dwg, 'Rech.', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
 
 
 x = x + SPACE_X + dx
-dx = key_function(dwg, 'Bio.', x, y)
+dx = key_function(dwg, 'Emp.', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
+
 
 x = x + SPACE_X + dx
-dx = key_letter(dwg, '-', x, y)
+dx = key_function(dwg, 'Bio.', x, y,    detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
 
 x = x + SPACE_X + dx
-dx = key_letter(dwg, '+', x, y)
+dx = key_letter(dwg, '-', x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
+
+x = x + SPACE_X + dx
+dx = key_letter(dwg, '+', x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
 
 
 # ligne 2
@@ -415,11 +628,11 @@ y = y + SPACE_Y + SIZE_KEY_Y + marge_Y_mm
 dx = 0
 for i in range(len(liste)):
     x = x + SPACE_X + dx
-    dx = key_letter(dwg, liste[i], x, y)
+    dx = key_letter(dwg, liste[i], x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=7, draw_zone=enable_detection_zones)
 
 x = x + SPACE_X * 2.5 + dx
 #dx = key_delete(dwg, x, y)
-dx = key_delete(dwg, x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=True)
+dx = key_delete(dwg, x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
 
 
 # ligne 3
@@ -429,11 +642,11 @@ y = y + SPACE_Y + SIZE_KEY_Y + marge_Y_mm
 dx = 0
 for i in range(len(liste)):
     x = x + SPACE_X + dx
-    dx = key_letter(dwg, liste[i], x, y)
+    dx = key_letter(dwg, liste[i], x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
     dwg.save()
 
 x = x + SPACE_X + dx
-dx = key_enter(dwg, x, y)
+dx = key_enter(dwg, x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
 
 last_x = x + dx
 
@@ -444,26 +657,28 @@ y = y + SPACE_Y + SIZE_KEY_Y + marge_Y_mm
 dx = 0
 for i in range(len(liste)):
     x = x + SPACE_X + dx
-    dx = key_letter(dwg, liste[i], x, y)
+    dx = key_letter(dwg, liste[i], x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
     dwg.save()
 
 x = x + 2*SPACE_X + dx
-dx = key_arrow_up(dwg, '\u2191', x, y)
+dx = key_arrow_up(dwg, '\u2191', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
 
 x = x + 2*SPACE_X + dx
-dx = key_arrow_down(dwg, '\u2193', x, y)
+dx = key_arrow_down(dwg, '\u2193', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
 
 # ligne 5
 
 x = SPACE_X * 2 + SIZE_KEY_X * 1 + marge_X_mm
 y = y + SPACE_Y + SIZE_KEY_Y + marge_Y_mm
-dx = key_arrow_h_left(dwg, '\u2190', x, y)
+dx = key_arrow_h_left(dwg, '\u2190', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
 
 x = x + dx + SPACE_X * 1 + SIZE_KEY_X * 0
-dx = key_space(dwg, x, y)
+#dx = key_space(dwg, x, y)
+dx = key_space(dwg, x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
+
 
 x = x + dx + SPACE_X * 1 + SIZE_KEY_X * 0
-dx = key_arrow_h_right(dwg, '\u2192', x, y)
+dx = key_arrow_h_right(dwg, '\u2192', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
 
 last_y = y + SIZE_KEY_Y
 
@@ -489,3 +704,5 @@ detourage(dwg, marge_X_mm, marge_Y_mm,
           (last_x + SPACE_X/2), (last_y + SPACE_Y))
 
 dwg.save()
+
+afficher_detection_zones(detection_zones)
