@@ -1,6 +1,5 @@
 
 import svgwrite
-#import svg2gcode
 from PIL import Image
 import numpy as np
 from matplotlib.font_manager import FontProperties
@@ -21,9 +20,10 @@ corner_radius_mm = 3
 taille_police = '50px'
 
 # Nom du fichier SVG de sortie
-filename = 'clavier16.svg'
+filename = 'clavier.svg'
 # Liste où les zones de détection seront stockées
 detection_zones = []
+emplacement_leds = []
 
 # Charger une police Single Line Font
 #police = FontProperties(fname="1CamBam_Stick_0")
@@ -499,9 +499,6 @@ def key_space(dwg, x, y, detection_zones_list, tol_x, tol_y, draw_zone=True):
     text = dwg.text('ESPACE', insert=(x_text, y_text),
                     text_anchor='middle', font_size='60px', font_family='Liberation Sans', stroke_width=f"{1}mm", font_weight='100')
      
-
-    #text = dwg.text('ESPACE', insert=((f"{milieu_texte_X}mm"), (f"{milieu_texte_Y}mm")),
-    #                text_anchor='middle', font_size='60px', font_family='1CamBam_Stick_0C')
     dwg.add(text)
 
     # Définir la zone de détection avec tolérance
@@ -591,6 +588,28 @@ def afficher_detection_zones(detection_zones_list):
         print(f"{key:<10} {x_min:<10} {x_max:<10} {y_min:<10} {y_max:<10}")
 
 
+def afficher_emplacement_leds(emplacement_leds_a_afficher):
+    """
+    Affiche la liste des emplacements des LEDs sous forme de tableau avec les nombres arrondis à 1 chiffre après la virgule.
+    :param emplacement_leds: La liste des emplacements des LEDs
+    """
+    # En-tête du tableau
+    print(f"{'LED':<10} {'x':<10} {'y':<10}")
+    print("-" * 30)  # Ligne de séparation
+
+    # Affichage de chaque emplacement avec un chiffre après la virgule
+    for led in emplacement_leds_a_afficher:
+        led_name = led['name']
+        x = f"{led['x']:.1f}"  # Arrondi à 1 chiffre après la virgule
+        y = f"{led['y']:.1f}"
+        
+        # Affichage formaté en colonnes
+        print(f"{led_name:<10} {x:<10} {y:<10}")
+
+
+"""
+PROGRAMME PRINCIPAL
+"""
 dwg = svgwrite.Drawing(filename, profile='tiny', size=(
     f"{board_width_mm}mm", f"{board_height_mm}mm"))
 
@@ -598,27 +617,30 @@ dwg = svgwrite.Drawing(filename, profile='tiny', size=(
 
 # cadre(dwg, marge_X_mm, marge_Y_mm)
 
+tol_std_x =3.3
+tol_std_y =7.3
+
 # ligne 1
 x = 8 * SPACE_X + marge_X_mm
 y = 2*SPACE_Y + marge_Y_mm
-dx = key_function(dwg, 'Acc.', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_function(dwg, 'Acc.', x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 x = x + SPACE_X + dx
-dx = key_function(dwg, 'Rech.', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
-
-
-x = x + SPACE_X + dx
-dx = key_function(dwg, 'Emp.', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_function(dwg, 'Rech.', x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 
 x = x + SPACE_X + dx
-dx = key_function(dwg, 'Bio.', x, y,    detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_function(dwg, 'Emp.', x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
+
 
 x = x + SPACE_X + dx
-dx = key_letter(dwg, '-', x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_function(dwg, 'Bio.', x, y,    detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 x = x + SPACE_X + dx
-dx = key_letter(dwg, '+', x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_letter(dwg, '-', x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
+
+x = x + SPACE_X + dx
+dx = key_letter(dwg, '+', x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 
 # ligne 2
@@ -628,11 +650,10 @@ y = y + SPACE_Y + SIZE_KEY_Y + marge_Y_mm
 dx = 0
 for i in range(len(liste)):
     x = x + SPACE_X + dx
-    dx = key_letter(dwg, liste[i], x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=7, draw_zone=enable_detection_zones)
+    dx = key_letter(dwg, liste[i], x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 x = x + SPACE_X * 2.5 + dx
-#dx = key_delete(dwg, x, y)
-dx = key_delete(dwg, x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_delete(dwg, x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 
 # ligne 3
@@ -642,11 +663,11 @@ y = y + SPACE_Y + SIZE_KEY_Y + marge_Y_mm
 dx = 0
 for i in range(len(liste)):
     x = x + SPACE_X + dx
-    dx = key_letter(dwg, liste[i], x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
+    dx = key_letter(dwg, liste[i], x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
     dwg.save()
 
 x = x + SPACE_X + dx
-dx = key_enter(dwg, x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_enter(dwg, x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 last_x = x + dx
 
@@ -657,28 +678,28 @@ y = y + SPACE_Y + SIZE_KEY_Y + marge_Y_mm
 dx = 0
 for i in range(len(liste)):
     x = x + SPACE_X + dx
-    dx = key_letter(dwg, liste[i], x, y, detection_zones_list=detection_zones, tol_x=7, tol_y=5, draw_zone=enable_detection_zones)
+    dx = key_letter(dwg, liste[i], x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
     dwg.save()
 
 x = x + 2*SPACE_X + dx
-dx = key_arrow_up(dwg, '\u2191', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_arrow_up(dwg, '\u2191', x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 x = x + 2*SPACE_X + dx
-dx = key_arrow_down(dwg, '\u2193', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_arrow_down(dwg, '\u2193', x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 # ligne 5
 
 x = SPACE_X * 2 + SIZE_KEY_X * 1 + marge_X_mm
 y = y + SPACE_Y + SIZE_KEY_Y + marge_Y_mm
-dx = key_arrow_h_left(dwg, '\u2190', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_arrow_h_left(dwg, '\u2190', x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 x = x + dx + SPACE_X * 1 + SIZE_KEY_X * 0
 #dx = key_space(dwg, x, y)
-dx = key_space(dwg, x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_space(dwg, x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 
 x = x + dx + SPACE_X * 1 + SIZE_KEY_X * 0
-dx = key_arrow_h_right(dwg, '\u2192', x, y, detection_zones_list=detection_zones, tol_x=7/2, tol_y=5, draw_zone=enable_detection_zones)
+dx = key_arrow_h_right(dwg, '\u2192', x, y, detection_zones_list=detection_zones, tol_x=tol_std_x, tol_y=tol_std_y, draw_zone=enable_detection_zones)
 
 last_y = y + SIZE_KEY_Y
 
@@ -686,18 +707,26 @@ last_y = y + SIZE_KEY_Y
 x = x + dx + SPACE_X * 3 + SIZE_KEY_X * 1
 y = y + SIZE_KEY_Y/2
 circle(dwg, x, y, 10)
+emplacement = {"name": "basse droite", "x": x, "y": y}
+
+# ajouter les emplacements des LEDs à la liste
+emplacement_leds.append(emplacement)
 
 # repere haut droit
-#x = x + dx + SPACE_X * 2 + SIZE_KEY_X * 1
 y = marge_Y_mm + SPACE_Y * 2 + SIZE_KEY_Y/2
 circle(dwg, x, y, 10)
+emplacement= {"name": "haute droite", "x": x, "y": y}
+# ajouter les emplacements des LEDs à la liste
+emplacement_leds.append(emplacement)
 
 
 # repere haut gauche
 x = marge_X_mm + SPACE_X * 0 + SIZE_KEY_X
 y = marge_Y_mm + SPACE_Y * 2 + SIZE_KEY_Y/2
 circle(dwg, x, y, 10)
-
+emplacement = {"name": "haute gauche", "x": x, "y": y}
+# ajouter les emplacements des LEDs à la liste
+emplacement_leds.append(emplacement)
 
 
 detourage(dwg, marge_X_mm, marge_Y_mm,
@@ -706,3 +735,5 @@ detourage(dwg, marge_X_mm, marge_Y_mm,
 dwg.save()
 
 afficher_detection_zones(detection_zones)
+print("\n")
+afficher_emplacement_leds(emplacement_leds)
