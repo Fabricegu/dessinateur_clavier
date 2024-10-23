@@ -1,0 +1,17 @@
+[
+    {
+        "name": "basse droite",
+        "x": 368.4,
+        "y": 170.0
+    },
+    {
+        "name": "haute droite",
+        "x": 368.4,
+        "y": 30.0
+    },
+    {
+        "name": "haute gauche",
+        "x": 33.8,
+        "y": 30.0
+    }
+]

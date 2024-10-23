@@ -1,5 +1,6 @@
 
 import svgwrite
+import json
 from PIL import Image
 import numpy as np
 from matplotlib.font_manager import FontProperties
@@ -75,10 +76,10 @@ def key_function(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_z
     #dessiner la zone de détection
     detection_zone = {
         "key": name,  # Nom de la touche
-        "x_min": x - tol_x,  # Limite gauche avec tolérance
-        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
-        "y_min": y - tol_y,  # Limite haute avec tolérance
-        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+        "x_min": round((x- tol_x),2),  # Limite gauche avec tolérance
+        "x_max": round((x + width_mm + tol_x),2),  # Limite droite avec tolérance
+        "y_min": round((y - tol_y),2),  # Limite haute avec tolérance
+        "y_max": round((y + height_mm + tol_y),2)  # Limite basse avec tolérance
     }
 
     # Ajouter la zone de détection à la liste
@@ -120,10 +121,10 @@ def key_letter(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_zon
     # Définir la zone de détection avec tolérance
     detection_zone = {
         "key": name,  # Nom de la touche
-        "x_min": x - tol_x,  # Limite gauche avec tolérance
-        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
-        "y_min": y - tol_y,  # Limite haute avec tolérance
-        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+        "x_min": round((x - tol_x),2),  # Limite gauche avec tolérance
+        "x_max": round((x + width_mm + tol_x),2),  # Limite droite avec tolérance
+        "y_min": round((y - tol_y),2),  # Limite haute avec tolérance
+        "y_max": round((y + height_mm + tol_y),2)  # Limite basse avec tolérance
     }
 
     # Ajouter la zone de détection à la liste
@@ -158,10 +159,10 @@ def key_arrow_v(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_zo
     #Définir la zone de détection avec tolérance
     detection_zone= {
         "key": name, # Nom de la touche
-        "x_min": x - tol_x, # Limite gauche avec tolérance
-        "x_max": x + width_mm + tol_x, # Limite droite avec tolérance
-        "y_min": y - tol_y, # Limite haute avec tolérance
-        "y_max": y + height_mm + tol_y # Limite basse avec tolérance
+        "x_min": round((x - tol_x),2),  # Limite gauche avec tolérance
+        "x_max": round((x + width_mm + tol_x),2),  # Limite droite avec tolérance
+        "y_min": round((y - tol_y),1),  # Limite haute avec tolérance
+        "y_max": round((y + height_mm + tol_y),2)  # Limite basse avec tolérance
     }   
 
     #ajouter la zone de détection à la liste
@@ -211,10 +212,10 @@ def key_arrow_h_left(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, dr
     #Définir la zone de détection avec tolérance
     detection_zone = {
         "key": name,  # Nom de la touche
-        "x_min": x - tol_x,  # Limite gauche avec tolérance
-        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
-        "y_min": y - tol_y,  # Limite haute avec tolérance
-        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+        "x_min": round((x - tol_x),2),  # Limite gauche avec tolérance
+        "x_max": round((x + width_mm + tol_x),2),  # Limite droite avec tolérance
+        "y_min": round((y - tol_y),2),  # Limite haute avec tolérance
+        "y_max": round((y + height_mm + tol_y),2)  # Limite basse avec tolérance
     }
 
     # Ajouter la zone de détection à la liste
@@ -265,10 +266,10 @@ def key_arrow_up(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw_z
     #Définir la zone de détection avec tolérance
     detection_zone = {
         "key": name,  # Nom de la touche
-        "x_min": x - tol_x,  # Limite gauche avec tolérance
-        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
-        "y_min": y - tol_y,  # Limite haute avec tolérance
-        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+        "x_min": round((x - tol_x),2),  # Limite gauche avec tolérance
+        "x_max": round((x + width_mm + tol_x),2),  # Limite droite avec tolérance
+        "y_min": round((y - tol_y),2),  # Limite haute avec tolérance
+        "y_max": round((y + height_mm + tol_y),2)  # Limite basse avec tolérance
     }
 
     # Ajouter la zone de détection à la liste
@@ -319,10 +320,10 @@ def key_arrow_down(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, draw
     #Définir la zone de détection avec tolérance
     detection_zone = {
         "key": name,  # Nom de la touche
-        "x_min": x - tol_x,  # Limite gauche avec tolérance
-        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
-        "y_min": y - tol_y,  # Limite haute avec tolérance
-        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+        "x_min": round((x - tol_x),2),  # Limite gauche avec tolérance
+        "x_max": round((x + width_mm + tol_x),2),  # Limite droite avec tolérance
+        "y_min": round((y - tol_y),2),  # Limite haute avec tolérance
+        "y_max": round((y + height_mm + tol_y),2)  # Limite basse avec tolérance
     }
 
     # Ajouter la zone de détection à la liste
@@ -371,10 +372,10 @@ def key_arrow_h_right(dwg, name, x, y, detection_zones_list, tol_x=0, tol_y=0, d
     #Définir la zone de détection avec tolérance
     detection_zone = {
         "key": name,  # Nom de la touche
-        "x_min": x - tol_x,  # Limite gauche avec tolérance
-        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
-        "y_min": y - tol_y,  # Limite haute avec tolérance
-        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+        "x_min": round((x - tol_x),2),  # Limite gauche avec tolérance
+        "x_max": round((x + width_mm + tol_x),2),  # Limite droite avec tolérance
+        "y_min": round((y - tol_y),2),  # Limite haute avec tolérance
+        "y_max": round((y + height_mm + tol_y),2)  # Limite basse avec tolérance
     }
 
     # Ajouter la zone de détection à la liste
@@ -415,10 +416,10 @@ def key_enter(dwg, x, y, detection_zones_list, tol_x, tol_y, draw_zone=True):
     # Définir la zone de détection avec tolérance
     detection_zone = {
         "key": "OK",  # Nom de la touche
-        "x_min": x - tol_x,  # Limite gauche avec tolérance
-        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
-        "y_min": y - tol_y,  # Limite haute avec tolérance
-        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+        "x_min": round((x - tol_x),2),  # Limite gauche avec tolérance
+        "x_max": round((x + width_mm + tol_x),2),  # Limite droite avec tolérance
+        "y_min": round((y - tol_y),2),  # Limite haute avec tolérance
+        "y_max": round((y + height_mm + tol_y),2)  # Limite basse avec tolérance
     }
 
     # Ajouter la zone de détection à la liste
@@ -458,10 +459,10 @@ def key_delete(dwg, x, y, detection_zones_list, tol_x, tol_y, draw_zone=True):
     # Définir la zone de détection avec tolérance
     detection_zone = {
         "key": "DEL",  # Nom de la touche
-        "x_min": x - tol_x,  # Limite gauche avec tolérance
-        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
-        "y_min": y - tol_y,  # Limite haute avec tolérance
-        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+        "x_min": round((x - tol_x),2),  # Limite gauche avec tolérance
+        "x_max": round((x + width_mm + tol_x),2),  # Limite droite avec tolérance
+        "y_min": round((y - tol_y),1),  # Limite haute avec tolérance
+        "y_max": round((y + height_mm + tol_y),2)  # Limite basse avec tolérance
     }
     
     # Ajouter la zone de détection à la liste
@@ -481,8 +482,6 @@ def key_delete(dwg, x, y, detection_zones_list, tol_x, tol_y, draw_zone=True):
     dwg.save()
     return width_mm
 
-
-#def key_space(dwg, x, y):
 def key_space(dwg, x, y, detection_zones_list, tol_x, tol_y, draw_zone=True):
     width_mm = SIZE_KEY_X * 7
 
@@ -503,11 +502,11 @@ def key_space(dwg, x, y, detection_zones_list, tol_x, tol_y, draw_zone=True):
 
     # Définir la zone de détection avec tolérance
     detection_zone = {
-        "key": "DEL",  # Nom de la touche
-        "x_min": x - tol_x,  # Limite gauche avec tolérance
-        "x_max": x + width_mm + tol_x,  # Limite droite avec tolérance
-        "y_min": y - tol_y,  # Limite haute avec tolérance
-        "y_max": y + height_mm + tol_y  # Limite basse avec tolérance
+        "key": "SPACE",  # Nom de la touche
+        "x_min": round((x - tol_x),2),  # Limite gauche avec tolérance
+        "x_max": round((x + width_mm + tol_x),2),  # Limite droite avec tolérance
+        "y_min": round((y - tol_y),2),  # Limite haute avec tolérance
+        "y_max": round((y + height_mm + tol_y),2)  # Limite basse avec tolérance
     }
     
     # Ajouter la zone de détection à la liste
@@ -606,6 +605,10 @@ def afficher_emplacement_leds(emplacement_leds_a_afficher):
         # Affichage formaté en colonnes
         print(f"{led_name:<10} {x:<10} {y:<10}")
 
+
+def sauvegarder_zones_dans_fichier(liste, nom_fichier):
+    with open(nom_fichier, 'w') as fichier:
+        json.dump(liste, fichier, indent=4)
 
 """
 PROGRAMME PRINCIPAL
@@ -707,7 +710,7 @@ last_y = y + SIZE_KEY_Y
 x = x + dx + SPACE_X * 3 + SIZE_KEY_X * 1
 y = y + SIZE_KEY_Y/2
 circle(dwg, x, y, 10)
-emplacement = {"name": "basse droite", "x": x, "y": y}
+emplacement = {"name": "basse droite", "x": round(x,2), "y": round(y,2)}
 
 # ajouter les emplacements des LEDs à la liste
 emplacement_leds.append(emplacement)
@@ -715,7 +718,7 @@ emplacement_leds.append(emplacement)
 # repere haut droit
 y = marge_Y_mm + SPACE_Y * 2 + SIZE_KEY_Y/2
 circle(dwg, x, y, 10)
-emplacement= {"name": "haute droite", "x": x, "y": y}
+emplacement= {"name": "haute droite", "x": round(x,2), "y": round(y,2)}
 # ajouter les emplacements des LEDs à la liste
 emplacement_leds.append(emplacement)
 
@@ -724,7 +727,7 @@ emplacement_leds.append(emplacement)
 x = marge_X_mm + SPACE_X * 0 + SIZE_KEY_X
 y = marge_Y_mm + SPACE_Y * 2 + SIZE_KEY_Y/2
 circle(dwg, x, y, 10)
-emplacement = {"name": "haute gauche", "x": x, "y": y}
+emplacement = {"name": "haute gauche", "x": round(x,2), "y": round(y,2)}
 # ajouter les emplacements des LEDs à la liste
 emplacement_leds.append(emplacement)
 
@@ -735,5 +738,9 @@ detourage(dwg, marge_X_mm, marge_Y_mm,
 dwg.save()
 
 afficher_detection_zones(detection_zones)
-print("\n")
+sauvegarder_zones_dans_fichier(detection_zones, 'zones_detection.json')
+print("Liste des zones de détection sauvegardée avec succès !")
 afficher_emplacement_leds(emplacement_leds)
+sauvegarder_zones_dans_fichier(emplacement_leds, 'emplacement_leds.json')
+print("Liste des emplacements des LEDs sauvegardée avec succès !")
+print("\n")
